@@ -1,3 +1,6 @@
+
+<img width="1920" height="758" alt="3" src="https://github.com/user-attachments/assets/02ff97ce-0f05-40f0-94d3-ec30cf5aa5bd" />
+
 # 🔍 MK-Reader
 
 **MK-Reader** è un'applicazione web "lightweight" e ultra-veloce progettata da **zMykerd** per la consultazione e la ricerca rapida all'interno di database di quiz o manuali tecnici. Grazie a un'interfaccia moderna e un motore di ricerca ottimizzato, permette di trovare risposte istantanee in grandi volumi di dati.
