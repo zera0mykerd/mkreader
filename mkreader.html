@@ -630,18 +630,20 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+
 // Crea l'indice di ricerca
 function createSearchIndex() {
     searchIndex = database.map((item, index) => {
-        const searchText = item.Descrizione ? item.Descrizione.toLowerCase() : '';
+        const searchText =
+            (item.Descrizione || '') + ' ' +
+            (item.Esito || '') + ' ' +
+            (item.Altro || '');
         return {
             index: index,
-            searchText: searchText
+            searchText: searchText.toLowerCase()
         };
     });
 }
-
-
 
 
 // Funzione per normalizzare il testo
@@ -711,9 +713,10 @@ function search() {
         const resultDiv = document.createElement('div');
         resultDiv.className = 'result';
 
-        resultDiv.innerHTML = 
-            '<h3>' + escapeHtml(dbItem.Descrizione) + '</h3>' +
-            '<p>' + escapeHtml(dbItem.Esito) + '</p>';
+	resultDiv.innerHTML =
+		'<h3>' + escapeHtml(dbItem.Descrizione) + '</h3>' +
+		'<p>' + escapeHtml(dbItem.Esito) + '</p>' +
+		(dbItem.Altro ? '<p>' + escapeHtml(dbItem.Altro) + '</p>' : '');
 
         resultsContainer.appendChild(resultDiv);
     });
@@ -741,7 +744,6 @@ function escapeRegExp(string) {
 
 // Aggiungi l'evento di input alla barra di ricerca
 document.getElementById('search').addEventListener('input', search);
-
 
 
 // let database=[];let searchIndex=[];const databases=[{name:'Patenti B-A 2013',base64:'data:application/gzip;base64,H4sIAA'},{name:'Patenti A-B 2020',base64:'data:application/gzip;base64,...'}];function extractBase64(d){let b=d;if(b.includes(',')){b=b.split(',')[1]}return b.replace(/\s/g,'')}const databaseSelectorContainer=document.getElementById('databaseSelectorContainer');databases.forEach((db,i)=>{const w=document.createElement('div');w.classList.add('radio-wrapper');w.style.marginBottom='32px';const r=document.createElement('input');r.type='radio';r.name='database';r.value=i;r.id=database${i};const l=document.createElement('label');l.htmlFor=database${i};l.textContent=db.name;l.classList.add('radio-label');w.appendChild(r);w.appendChild(l);databaseSelectorContainer.appendChild(w);r.addEventListener('change',()=>loadDatabase(db.base64,db.name));r.addEventListener('contextmenu',(e)=>{e.preventDefault();navigator.clipboard.writeText(db.base64).then(()=>alert(Copiato: ${db.name}))})});function loadDatabase(d,n){try{database=[];const b=extractBase64(d);const s=atob(b);const by=new Uint8Array(s.length);for(let i=0;i<s.length;i++){by[i]=s.charCodeAt(i)}const dec=pako.ungzip(by);let j=new TextDecoder('utf-8').decode(dec);j=replaceUnicodeSequences(j);try{const data=JSON.parse(j);if(Array.isArray(data)){database=data}else if(data.Domande){database=data.Domande}else{database=[]}}catch(e){console.warn('JSON manuale...');database=extractDataManually(j)}createSearchIndex();console.log(Caricato: ${n} (${database.length} quiz));document.getElementById('search').disabled=false;if(document.getElementById('search').value)search()}catch(err){console.error('Errore:',err);alert("Errore caricamento.")}}function replaceUnicodeSequences(t){return t.replace(/\u([\dA-F]{4})/gi,(m,g)=>String.fromCharCode(parseInt(g,16)))}function extractDataManually(j){const d=[];const r=/"Descrizione"\s*:\s*"([^"])"\s,\s*"Esito"\s*:\s*"([^"]*)"/g;let m;while((m=r.exec(j))!==null){d.push({Descrizione:m[1],Esito:m[2]})}return d}function createSearchIndex(){searchIndex=database.map((it,i)=>({index:i,searchText:(it.Descrizione||'').toLowerCase()}))}function normalizeText(t){return t.toLowerCase().replace(/[’‘]/g,"'")}function search(){const s=normalizeText(document.getElementById('search').value);const c=document.getElementById('results');c.innerHTML='';if(s.trim()==='')return;const w=s.split(/\s+/).filter(x=>x.length>0);const f=searchIndex.filter(it=>{const t=normalizeText(it.searchText);let cur=0;return w.every(word=>{cur=t.indexOf(word,cur);if(cur!==-1){cur+=word.length;return true}return false})});const u=new Map();f.forEach(it=>{const db=database[it.index];if(db&&db.Descrizione){const d=normalizeText(db.Descrizione);if(!u.has(d))u.set(d,it)}});const res=Array.from(u.values()).sort((a,b)=>{const da=normalizeText(database[a.index].Descrizione);const db=normalizeText(database[b.index].Descrizione);return da.localeCompare(db,'it')});res.slice(0,25).forEach(it=>{const d=database[it.index];const div=document.createElement('div');div.className='result';div.innerHTML=<h3>${escapeHtml(d.Descrizione)}</h3><p>${escapeHtml(d.Esito)}</p>`;c.appendChild(div)})}function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}document.getElementById('search').addEventListener('input',search);
